@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>H5播放器自动化测试</title>
+    <!--<script src='http://player.polyv.net/html5Javascript/20200106/player.js'></script>-->
+    <script src='../static/js/h5polyvplayer.min.js'></script>
+</head>
+<body>
+<div id='plv_video'></div>
+<p id='video_status'>
+    初始化状态：<span id = "ready_status"></span>  <span id = "ready_vid"></span><br>
+    播放状态：<span id = "play_status"></span><br>
+    <!-- seek状态：<span id = "seek_status"></span><br>  -->
+    <!-- seek后的播放进度：<span id = "seek_time"></span><br> -->
+    <span id = "play_error" style="color:red;"></span><br>
+
+</p>
+
+<h3 id='preview_title' style="text-align:center; width:100%; display:none ;">预览功能测试</h3>
+<div id='preview_area' style="display: none;"></div>
+
+<script>
+
+var vid = '{{ vid }}';
+var playsafe = '{{ playsafe }}'
+var ts = '{{ ts }}'
+var sign = '{{ sign }}'
+// 预览功能的vid设置
+var preview_vid = "";
+var encodeString = Encode("",preview_vid);
+
+var player = polyvPlayer({
+    wrap: '#plv_video',
+    width: 690,
+    height: 439,
+    vid: vid,
+    skinLocation:2,
+    df:3,
+    autoplay:false,
+    playsafe: playsafe,
+    ts: ts,
+    sign: sign
+});
+
+
+function Encode(key, message)
+    {
+        var alphabet, coded, i, ch, index;
+
+        alphabet = "abcdofghijklnmepqrstuvwxyz0123456789";
+
+        coded = "" + alphabet.charAt(parseInt(Math.random()*alphabet.length));
+        for (i = 0; i < message.length; i++) {        // for as many letters as there are
+            ch = message.charAt(i);                   //   access the letter in the message
+            index = alphabet.indexOf(ch);
+                                                      //   find its position in alphabet
+            if (index === -1) {
+                                                      //   if it's not a letter,
+                coded = coded + ch;                   //     then leave it as is & add
+            }                                         //   otherwise,
+            else {                                    //     find the corresponding
+                coded = coded + key.charAt(index);    //     letter in the key & add
+            }
+        }
+        return coded
+    }
+
+function s2j_onReadyPlay(current_vid){
+    if(current_vid !== preview_vid){
+        document.getElementById("ready_status").innerHTML="已完成";
+        document.getElementById("ready_vid").innerHTML=current_vid;
+    }
+
+}
+
+function s2j_onPlayStart(current_vid){
+
+    if(current_vid !== preview_vid){
+        document.getElementById("play_status").innerHTML="开始播放";
+    }
+}
+
+function s2j_onVideoPlay(current_vid){
+    if(current_vid !== preview_vid){
+        document.getElementById("play_status").innerHTML="触发播放";
+    }
+}
+
+function s2j_onVideoPause(current_vid){
+    if(current_vid !== preview_vid){
+        document.getElementById("play_status").innerHTML="触发暂停";
+    }
+}
+
+function s2j_onPlayOver(current_vid){
+    if(current_vid !== preview_vid){
+        document.getElementById("play_status").innerHTML="触发结束";
+    }
+}
+
+
+player.on('serverError', function(event, errorCode){
+
+    document.getElementById("play_error").innerHTML="播放失败";
+    if(errorCode === "#006"){
+        document.getElementById("play_error").innerHTML="黑白名单检查不通过";
+    }
+});
+
+</script>
+</body>
+</html>
