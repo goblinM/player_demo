@@ -31,7 +31,7 @@ Django==2.1.2
 django-cors-headers==2.2.0
 django-crontab==0.7.1
 django-filter==2.0.0
-djangorestframework==3.5.4
+djangorestframework==3.9.1
 PyYAML==5.1.2
 selenium==3.14.0
 uiautomation==2.0.3
